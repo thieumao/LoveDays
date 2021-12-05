@@ -3,7 +3,9 @@ import { Platform, Dimensions, StyleSheet, TouchableOpacity, Image,
   Modal, TextInput } from 'react-native';
 import { Text, View } from '../components/Themed';
 import * as ImagePicker from 'expo-image-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { RootStackScreenProps } from '../types';
+import moment from 'moment';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -20,6 +22,23 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   const [name1, setName1] = useState('Name 1');
   const [name2, setName2] = useState('Name 2');
   const [text, setText] = useState('');
+  const [day, setDay] = useState(0);
+
+  // const [show, setShow] = useState(true);
+  const [date, setDate] = useState(new Date());
+  const onChangeDate = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    // setShow(true);
+    setDate(currentDate);
+    console.log(currentDate);
+
+    var given = moment(selectedDate, "YYYY-MM-DD");
+    var current = moment().startOf('day');
+
+    //Difference in number of days
+    const number = moment.duration(current.diff(given)).asDays();
+    setDay(Math.floor(number));
+  };
 
   useEffect(() => {
     (async () => {
@@ -57,7 +76,19 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
     <View style={styles.container}>
       <View style={styles.banner}>
         <Image style={styles.container} source={require("../assets/images/banner.png")} />
-        <Text style={styles.title}>From 04/03/2018</Text>
+        {/* <TouchableOpacity onPress={() => setShow(true)}>
+          <Text style={styles.title}>From 04/03/2018</Text>
+        </TouchableOpacity> */}
+        {/* <Text style={styles.title}>From</Text> */}
+        <DateTimePicker
+          style={styles.date}
+          testID="dateTimePicker"
+          value={date}
+          mode={'date'}
+          is24Hour={true}
+          display="default"
+          onChange={onChangeDate}
+        />
       </View>
       <View style={styles.content}>
         <View style={styles.twoPeople}>
@@ -86,7 +117,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
             </TouchableOpacity>
           </View>
         </View>
-        <Text style={styles.day}>2000 days</Text>  
+        <Text style={styles.day}>{day} days</Text>  
       </View>
       <Modal
         animationType="slide"
@@ -126,9 +157,9 @@ const styles = StyleSheet.create({
   banner: {
     width: '100%',
     height: '40%',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'grey',
+    backgroundColor: '#FBE8E6',
   },
   bannerImg: {
     width: '100%',
@@ -228,5 +259,14 @@ const styles = StyleSheet.create({
     width: 0.6 * screenWidth,
     marginBottom: 12,
     padding: 12,
+  },
+
+  date: {
+    width: '34%',
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FBE8E6',
+    alignSelf: 'center',
   },
 });

@@ -1,5 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
-import { Platform, Dimensions, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { Platform, Dimensions, StyleSheet, TouchableOpacity, Image,
+  Modal, Pressable, Alert } from 'react-native';
 import { Text, View } from '../components/Themed';
 import * as ImagePicker from 'expo-image-picker';
 import { RootStackScreenProps } from '../types';
@@ -10,9 +11,13 @@ const screenHeight = Dimensions.get('window').height;
 enum PERSON {
   ONE = 'ONE',
   TWO = 'TWO',
+  NONE = 'NONE',
 }
 
 export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>) {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [personType, setPersonType] = useState<PERSON>(PERSON.NONE);
+
   useEffect(() => {
     (async () => {
       if (Platform.OS !== 'web') {
@@ -58,18 +63,38 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
               {!image1 && <Image style={styles.avatar} source={require("../assets/images/avatar.png")} />}
               {image1 && <Image style={styles.avatar} source={{ uri: image1 }} />}
             </TouchableOpacity>
-            <Text style={styles.name}>Person 1</Text>  
+            <TouchableOpacity onPress={() => { setPersonType(PERSON.ONE); setModalVisible(true); }}>
+              <Text style={styles.name}>Person 1</Text>  
+            </TouchableOpacity>
           </View>
           <View style={styles.people}>
             <TouchableOpacity onPress={() => pickImage(PERSON.TWO)}>
               {!image2 && <Image style={styles.avatar} source={require("../assets/images/avatar.png")} />}
               {image2 && <Image style={styles.avatar} source={{ uri: image2 }} />}
             </TouchableOpacity>
-            <Text style={styles.name}>Person 2</Text>  
+            <TouchableOpacity onPress={() => { setPersonType(PERSON.TWO); setModalVisible(true); }}>
+              <Text style={styles.name}>Person 2</Text>
+            </TouchableOpacity>
           </View>
         </View>
         <Text style={styles.day}>2000 days</Text>  
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => { setModalVisible(!modalVisible); }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Hello World!</Text>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Text style={styles.textStyle}>Hide Modal</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -138,5 +163,47 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 24,
     color: 'red',
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });

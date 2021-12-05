@@ -24,20 +24,16 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   const [text, setText] = useState('');
   const [day, setDay] = useState(0);
 
-  // const [show, setShow] = useState(true);
   const [date, setDate] = useState(new Date());
   const onChangeDate = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    // setShow(true);
-    setDate(currentDate);
-    console.log(currentDate);
 
-    var given = moment(selectedDate, "YYYY-MM-DD");
-    var current = moment().startOf('day');
+    const given = moment(selectedDate, "YYYY-MM-DD");
+    const current = moment().startOf('day');
+    setDate(selectedDate);
 
     //Difference in number of days
     const number = moment.duration(current.diff(given)).asDays();
-    setDay(Math.floor(number));
+    setDay(Math.floor(number) + 2);
   };
 
   useEffect(() => {

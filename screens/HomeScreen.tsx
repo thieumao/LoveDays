@@ -6,6 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RootStackScreenProps } from '../types';
 import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -35,6 +36,36 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
     const number = moment.duration(current.diff(given)).asDays();
     setDay(Math.floor(number) + 2);
   };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        // save
+        const savedName1 = await AsyncStorage.getItem('name1') || '';
+        setName1(savedName1);
+        const savedName2 = await AsyncStorage.getItem('name2') || '';
+        setName2(savedName2);
+        const savedDate = await AsyncStorage.getItem('date') || '';
+        setDate(JSON.parse(savedDate));
+        const savedDay = Number(await AsyncStorage.getItem('day') || 0);
+        setDay(savedDay);
+      } catch (e) { 
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        // save
+        await AsyncStorage.setItem('name1', name1);
+        await AsyncStorage.setItem('name2', name2);
+        await AsyncStorage.setItem('date', JSON.stringify(date));
+        await AsyncStorage.setItem('day', JSON.stringify(day));
+      } catch (e) { 
+      }
+    })();
+  }, [name1, name2, date, day]);
 
   useEffect(() => {
     (async () => {

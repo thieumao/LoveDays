@@ -1,6 +1,6 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Platform, Dimensions, StyleSheet, TouchableOpacity, Image,
-  Modal, Pressable, Alert } from 'react-native';
+  Modal, TextInput } from 'react-native';
 import { Text, View } from '../components/Themed';
 import * as ImagePicker from 'expo-image-picker';
 import { RootStackScreenProps } from '../types';
@@ -17,6 +17,9 @@ enum PERSON {
 export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>) {
   const [modalVisible, setModalVisible] = useState(false);
   const [personType, setPersonType] = useState<PERSON>(PERSON.NONE);
+  const [name1, setName1] = useState('Name 1');
+  const [name2, setName2] = useState('Name 2');
+  const [text, setText] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -63,8 +66,11 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
               {!image1 && <Image style={styles.avatar} source={require("../assets/images/avatar.png")} />}
               {image1 && <Image style={styles.avatar} source={{ uri: image1 }} />}
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { setPersonType(PERSON.ONE); setModalVisible(true); }}>
-              <Text style={styles.name}>Person 1</Text>  
+            <TouchableOpacity onPress={() => {
+              setText(name1);
+              setPersonType(PERSON.ONE); setModalVisible(true);
+            }}>
+              <Text style={styles.name}>{name1 || 'Name 1'}</Text>  
             </TouchableOpacity>
           </View>
           <View style={styles.people}>
@@ -72,8 +78,11 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
               {!image2 && <Image style={styles.avatar} source={require("../assets/images/avatar.png")} />}
               {image2 && <Image style={styles.avatar} source={{ uri: image2 }} />}
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { setPersonType(PERSON.TWO); setModalVisible(true); }}>
-              <Text style={styles.name}>Person 2</Text>
+            <TouchableOpacity onPress={() => {
+              setText(name2);
+              setPersonType(PERSON.TWO); setModalVisible(true); 
+            }}>
+              <Text style={styles.name}>{name2 || 'Name 2'}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -86,11 +95,20 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
         onRequestClose={() => { setModalVisible(!modalVisible); }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Hello World!</Text>
+            <Text style={styles.modalText}>Name:</Text>
+            <TextInput value={text} onChangeText={value => setText(value)}
+              style={styles.textInput} placeholder='Type here...' />
             <TouchableOpacity
               style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.textStyle}>Hide Modal</Text>
+              onPress={() => {
+                if (personType === PERSON.ONE) {
+                  setName1(text);
+                } else if (personType === PERSON.TWO) {
+                  setName2(text);
+                }
+                setModalVisible(!modalVisible);
+              }}>
+              <Text style={styles.textStyle}>Set Name</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -205,5 +223,10 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
+  },
+  textInput: {
+    width: 0.6 * screenWidth,
+    marginBottom: 12,
+    padding: 12,
   },
 });

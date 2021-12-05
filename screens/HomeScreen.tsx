@@ -49,6 +49,12 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
         setDate(JSON.parse(savedDate));
         const savedDay = Number(await AsyncStorage.getItem('day') || 0);
         setDay(savedDay);
+
+        const savedImage1 = await AsyncStorage.getItem('image1') || '';
+        setImage1(JSON.parse(savedImage1));
+
+        const savedImage2 = await AsyncStorage.getItem('image2') || '';
+        setImage2(JSON.parse(savedImage2));
       } catch (e) { 
       }
     })();
@@ -62,6 +68,8 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
         await AsyncStorage.setItem('name2', name2);
         await AsyncStorage.setItem('date', JSON.stringify(date));
         await AsyncStorage.setItem('day', JSON.stringify(day));
+        await AsyncStorage.setItem('image1', JSON.stringify(image1));
+        await AsyncStorage.setItem('image2', JSON.stringify(image2));
       } catch (e) { 
       }
     })();
